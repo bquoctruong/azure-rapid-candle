@@ -19,10 +19,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # - name: Set up Git user
-      #   run: |
-      #     git config --global user.name "bqtruong"
-      #    # git config --global user.email "bquoctruong@github.com"
+
       - name: Set up .netrc for Azure DevOps authentication
         run: |
           echo "machine dev.azure.com login ${{ secrets.AZURE_DEVOPS_PAT }} password ${{ secrets.AZURE_DEVOPS_PAT }}" > ~/.netrc
@@ -36,6 +33,10 @@ jobs:
       - name: Fetch from Azure Repos
         run: |
             git fetch azure
+      - name: Set up Git user
+        run: |
+          git config --global user.name "bqtruong"
+          git config --global user.email "bquoctruong@github.com"
 
       - name: Merge changes from Azure Repos
         run: |
