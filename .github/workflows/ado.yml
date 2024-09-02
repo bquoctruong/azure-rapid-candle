@@ -32,9 +32,19 @@ jobs:
           AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
         run: |
           git remote add azure https://dev.azure.com/bqtruong/_git/azure-rapid-candle
-      - name: Fetch from Azure Repos
+      - name: Check if the repository is shallow
+        id: check_shallow
+        run: echo "shallow=$(git rev-parse --is-shallow-repository)" >> $GITHUB_ENV
+    
+      - name: Unshallow the repository if needed
+        if: env.shallow == 'true'
         run: |
-            git fetch --unshallow azure
+          git fetch --unshallow azure
+  
+      - name: Fetch from Azure Repos with full history
+        if: env.shallow == 'false'
+        run: |
+          git fetch azure
       - name: Set up Git user
         run: |
           git config --global user.name "bqtruong"
