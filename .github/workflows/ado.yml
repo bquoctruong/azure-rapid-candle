@@ -32,6 +32,7 @@ jobs:
         env:
           AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
         run: |
+          git pull
           git remote add azure https://dev.azure.com/bqtruong/_git/azure-rapid-candle
           git push azure HEAD:main
 
