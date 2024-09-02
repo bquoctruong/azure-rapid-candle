@@ -1,4 +1,4 @@
-name: Build and deploy a container to an Azure Web App
+name: Deploy Repository to ADO
 
 env:
   AZURE_WEBAPP_NAME: azure-rapid-candle  # set this to the name of your Azure Web App
@@ -25,7 +25,7 @@ jobs:
   
       - name: Add Azure DevOps remote
         run: |
-          git remote add origin https://dev.azure.com/bqtruong/_git/azure-rapid-candle
+          git remote set-url origin https://dev.azure.com/bqtruong/_git/azure-rapid-candle
           git fetch main
   
       - name: Push to Azure DevOps
