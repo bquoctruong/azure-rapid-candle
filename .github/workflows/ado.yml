@@ -23,10 +23,14 @@ jobs:
       #   run: |
       #     git config --global user.name "bqtruong"
       #    # git config --global user.email "bquoctruong@github.com"
+      - name: Set up .netrc for Azure DevOps authentication
+        run: |
+          echo "machine dev.azure.com login ${{ secrets.AZURE_DEVOPS_PAT }} password ${{ secrets.AZURE_DEVOPS_PAT }}" > ~/.netrc
+          chmod 600 ~/.netrc
   
       - name: Add Azure DevOps remote
-        # env:
-        #   AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
+        env:
+          AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
         run: |
           git remote add azure https://dev.azure.com/bqtruong/_git/azure-rapid-candle
           git push azure HEAD:main
