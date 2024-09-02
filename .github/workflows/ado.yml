@@ -19,20 +19,17 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up Git user
-        run: |
-          git config --global user.name "bqtruong"
-         # git config --global user.email "bquoctruong@github.com"
+      # - name: Set up Git user
+      #   run: |
+      #     git config --global user.name "bqtruong"
+      #    # git config --global user.email "bquoctruong@github.com"
   
       - name: Add Azure DevOps remote
-        run: |
-          git remote set-url origin https://dev.azure.com/bqtruong/_git/azure-rapid-candle
-  
-      - name: Push to Azure DevOps
         env:
           AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
         run: |
-          git push
+          git remote add azure https://dev.azure.com/bqtruong/_git/azure-rapid-candle
+          git push azure HEAD:main
 
 #       - name: Set up Docker Buildx
 #         uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
