@@ -18,15 +18,15 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+
       - name: Set up Git user
         run: |
-          git config --global user.name "bquoctruong"
-          git config --global user.email "bquoctruong@github.com"
+          git config --global user.name "bqtruong"
+         # git config --global user.email "bquoctruong@github.com"
   
       - name: Add Azure DevOps remote
         run: |
           git remote set-url origin https://dev.azure.com/bqtruong/_git/azure-rapid-candle
-          git fetch main
   
       - name: Push to Azure DevOps
         env:
