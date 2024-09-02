@@ -40,7 +40,7 @@ jobs:
 
       - name: Merge changes from Azure Repos
         run: |
-          git merge azure/main --allow-unrelated-histories
+          git merge -X theirs azure/main --allow-unrelated-histories
 
       - name: Push to Azure Repos
         run: |
