@@ -1,8 +1,5 @@
 name: Deploy Repository to ADO
 
-env:
-  AZURE_WEBAPP_NAME: azure-rapid-candle  # set this to the name of your Azure Web App
-
 on:
   push:
     branches: [ "main" ]
@@ -14,14 +11,15 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
+      # Checkout current GitHub repo
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
+          # fetch-depth: fetches full history of repo; avoids creation of shallow clone
           fetch-depth: 0
-
-
+      
+      # Auth to Azure DevOps
       - name: Set up .netrc for Azure DevOps authentication
         run: |
           echo "machine dev.azure.com login ${{ secrets.AZURE_DEVOPS_PAT }} password ${{ secrets.AZURE_DEVOPS_PAT }}" > ~/.netrc
@@ -32,6 +30,8 @@ jobs:
           AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
         run: |
           git remote add azure https://dev.azure.com/bqtruong/_git/azure-rapid-candle
+      
+      # Step to check if repository is shallow; issue occurs when pushing to Azure Repos
       - name: Check if the repository is shallow
         id: check_shallow
         run: echo "shallow=$(git rev-parse --is-shallow-repository)" >> $GITHUB_ENV
@@ -45,11 +45,13 @@ jobs:
         if: env.shallow == 'false'
         run: |
           git fetch azure
+
       - name: Set up Git user
         run: |
-          git config --global user.name "bqtruong"
-          git config --global user.email "bquoctruong@github.com"
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
 
+      # Merge changes from this GitHub repos to Azure Repos; auto-selects AR if conflict arises
       - name: Merge changes from Azure Repos
         run: |
           git merge -X theirs azure/main --allow-unrelated-histories
@@ -57,44 +59,3 @@ jobs:
       - name: Push to Azure Repos
         run: |
           git push azure HEAD:main
-
-#       - name: Set up Docker Buildx
-#         uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
-
-#       - name: Log in to GitHub container registry
-#         uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
-#         with:
-#           registry: ghcr.io
-#           username: ${{ github.actor }}
-#           password: ${{ github.token }}
-
-#       - name: Lowercase the repo name and username
-#         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-
-#       - name: Build and push container image to registry
-#         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
-#         with:
-#           push: true
-#           tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
-#           file: ./Dockerfile
-
-#   deploy:
-#     permissions:
-#       contents: none
-#     runs-on: ubuntu-latest
-#     needs: build
-#     environment:
-#       name: 'Development'
-#       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-#     steps:
-#       - name: Lowercase the repo name and username
-#         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-
-#       - name: Deploy to Azure Web App
-#         id: deploy-to-webapp
-#         uses: azure/webapps-deploy@v2
-#         with:
-#           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-#           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-#           images: 'ghcr.io/${{ env.REPO }}:${{ github.sha }}'
