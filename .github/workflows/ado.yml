@@ -34,6 +34,7 @@ jobs:
         run: |
           git remote add azure https://dev.azure.com/bqtruong/_git/azure-rapid-candle
           git pull
+          git fetch
           git push azure HEAD:main
 
 #       - name: Set up Docker Buildx
