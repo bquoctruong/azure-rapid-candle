@@ -33,8 +33,16 @@ jobs:
           AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
         run: |
           git remote add azure https://dev.azure.com/bqtruong/_git/azure-rapid-candle
-          git pull
-          git fetch
+      - name: Fetch from Azure Repos
+        run: |
+            git fetch azure
+
+      - name: Merge changes from Azure Repos
+        run: |
+          git merge azure/main --allow-unrelated-histories
+
+      - name: Push to Azure Repos
+        run: |
           git push azure HEAD:main
 
 #       - name: Set up Docker Buildx
